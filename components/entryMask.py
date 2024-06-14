@@ -1,7 +1,9 @@
 import tkinter as tk
 import ttkbootstrap as ttk
 from ttkbootstrap.constants import *
+import random
 
+from windows.createMask import CreateMask
 
 class EntryMask(ttk.Frame):
   def __init__(self, master):
@@ -9,6 +11,7 @@ class EntryMask(ttk.Frame):
     self.pack(fill=tk.X)
 
     self.master = master
+    self.mask_list = []
     
     self.label = ttk.Label(self, text="Número de mascaras", justify="left", anchor="w")
     self.label.pack(side=tk.TOP, fill=tk.X)
@@ -34,7 +37,18 @@ class EntryMask(ttk.Frame):
     return False
   
   def generate_masks(self):
-    pass
+    n_mask = int(float(self.entry.get()))
+    images_list = self.master.images_list
+    mask_list = [images_list[i] for i in random.sample(range(len(images_list)), n_mask)]
+    
+    for i in mask_list:
+      try:
+        if self.master.winfo_exists():  
+          new_mask = CreateMask(self.master, path=(self.master.path + "/" + i), action=self.mask_list_set, total_masks=n_mask, current_mask=mask_list.index(i) + 1)
+          self.wait_window(new_mask)
+      except:
+        return 
+    
   
   def values_set(self):
     self.slider.config(from_=0, to=len(self.master.images_list))
@@ -43,4 +57,7 @@ class EntryMask(ttk.Frame):
   def slider_changed(self, value):
     self.entry.delete(0, tk.END)
     self.entry.insert(0, int(float(value)))
+    
+  def mask_list_set(self, mask):
+    self.mask_list.append(mask)
 

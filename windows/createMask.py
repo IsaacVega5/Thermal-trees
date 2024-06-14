@@ -1,18 +1,22 @@
 import tkinter as tk
 import ttkbootstrap as ttk
 from ttkbootstrap.constants import *
+from ttkbootstrap.dialogs import Messagebox
 from PIL import Image, ImageTk, ImageDraw
 import numpy as np
 import cv2  
 
 class CreateMask(ttk.Toplevel):
-  def __init__(self, master, path):
+  def __init__(self, master, path, action, total_masks, current_mask):
     super().__init__(master)
-    self.title("Crear mascara")
+    x = self.master.winfo_x()
+    y = self.master.winfo_y()
+    self.geometry("+%d+%d" % (x + 100, y + 200))
+    
+    self.title(f'Mascara {current_mask} de {total_masks}')
     self.master = master
     self.path = path
-    # self.geometry("1004x450")
-    # self.resizable(False, False)
+    self.action = action
     self.vertices = []
     
     self.img = Image.open(path)
@@ -28,7 +32,7 @@ class CreateMask(ttk.Toplevel):
     self.clear_btn = ttk.Button(self.tool_bar, text="Limpiar", style='danger', command=self.clear_click)
     self.clear_btn.pack(side=tk.LEFT, padx=10, pady=10)
     
-    self.save_btn = ttk.Button(self.tool_bar, text="Guardar")
+    self.save_btn = ttk.Button(self.tool_bar, text="Guardar", command=self.save_click)
     self.save_btn.pack(side=tk.RIGHT, padx=10, pady=10)
     
     self.separator = ttk.Separator(self, orient=HORIZONTAL)
@@ -49,9 +53,15 @@ class CreateMask(ttk.Toplevel):
     
     
     self.bind("<Control-z>", self.ctr_z)
+    self.protocol("WM_DELETE_WINDOW", self.on_destroy)
     
     self.resizable(False, False)
     
+    
+  def save_click(self):
+    self.action(self.vertices)
+    
+    self.destroy()
   
   def on_img_click(self, event):
     x, y = event.x, event.y
@@ -107,6 +117,8 @@ class CreateMask(ttk.Toplevel):
     self.mask_label.configure(image=self.mask_img)
     self.mask_label.image = self.mask_img
     
-
-
-    
+  def on_destroy(self):
+    msg = Messagebox.show_question(message="¿Seguro que desea cerrar la ventana?\nLa mascara no se guardara", title='Cerrar ventana', parent=None, alert=True, buttons=['Cancelar:secondary', 'Cerrar:primary'])
+    if msg == 'Cancelar':
+      return
+    self.destroy()

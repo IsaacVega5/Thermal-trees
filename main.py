@@ -31,9 +31,6 @@ class App(ttk.Frame):
     self.Mask_list = MaskList(self)
     
     self.footer = Footer(self)
-    
-    # self.CreateMask = CreateMask(self, path="C:/Users/Usuario/Desktop/DataSet/Arboles/Imagenes termales/IR_06255.tif")
-    # self.CreateMask.after(250, self.CreateMask.lift)
 
 
 if __name__ == "__main__":
