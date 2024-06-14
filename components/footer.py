@@ -1,6 +1,13 @@
 import tkinter as tk
 import ttkbootstrap as ttk
 from ttkbootstrap.constants import *
+from ttkbootstrap.dialogs import Messagebox
+import numpy as np
+import cv2
+from PIL import Image
+from matplotlib import pyplot as plt
+
+from services.process import temperature_from_pixel_color
 
 class Footer(ttk.Frame):
   def __init__(self, master):
@@ -42,4 +49,58 @@ class Footer(ttk.Frame):
     return False
   
   def get_temperature(self):
-    pass
+    mask_list = self.master.mask_list
+    image_list = self.master.images_list
+    path = self.master.path
+    
+    if len(image_list) == 0:
+      Messagebox.show_error(message="No hay imágenes cargadas", title='Aviso', parent=None, alert=True, buttons=["Aceptar:primary"])
+      return
+    if len(mask_list) == 0:
+      Messagebox.show_error(message="No hay máscaras creadas", title='Aviso', parent=None, alert=True, buttons=["Aceptar:primary"])
+      return
+    
+    mask_array_list = []
+    for mask in mask_list:
+      mask_array = np.zeros(mask["size"])
+      figure = np.array(mask["vertices"])
+      if len(mask["vertices"]) > 0:
+        cv2.fillPoly(mask_array, [figure], 1)
+      mask_array_list.append(mask_array)
+      
+    
+    average_mask = np.zeros(mask_array_list[0].shape)
+    for mask_array in mask_array_list:
+      average_mask += mask_array
+    average_mask /= len(mask_array_list)
+    
+    average_mask = np.where(average_mask >= 0.5, 1, 0)
+    
+    print(average_mask)
+    
+  
+    plt.figure()
+    plt.imshow(average_mask, cmap='gray')
+    plt.show()
+    
+    for image in image_list:
+      img = Image.open(path + "/" + image).convert('L')
+      average_mask_img = Image.fromarray(average_mask * 255).convert('L').resize(img.size)
+      
+      img = np.array(img)
+      average_mask_resized = np.array(average_mask_img) / 255
+      average_mask_resized = np.where(average_mask_resized >= 0.5, 1, 0)
+
+      values = img[average_mask_resized == 1]
+      max = temperature_from_pixel_color(np.max(values))
+      mean = temperature_from_pixel_color(np.mean(values))
+      min = temperature_from_pixel_color(np.min(values))
+      
+      print(f"Max: {max}")
+      print(f"Mean: {mean}")
+      print(f"Min: {min}")
+      print("-------------------------------------")
+      
+      
+
+    # Show individual masks

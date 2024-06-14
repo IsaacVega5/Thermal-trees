@@ -15,7 +15,7 @@ class MaskList(ttk.Frame):
     self.pack(fill=tk.X, expand=True)
 
     self.master = master
-    self.label = ttk.Label(self, text="Mascaras", justify="center")
+    self.label = ttk.Label(self, text="Máscaras", justify="center")
     self.label.pack(side=tk.TOP)
     
     self.mask_list_frame = ScrolledFrame(self, height=150, s_bootstyle="primary")
