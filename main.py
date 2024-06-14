@@ -7,7 +7,6 @@ from components.imagesList import ImagesList
 from components.entryMask import EntryMask
 from components.maskList import MaskList
 from components.footer import Footer
-from windows.createMask import CreateMask
 
 root = ttk.Window( title="Thermal Trees", iconphoto = './assets/three-blue.png')
 
@@ -33,8 +32,8 @@ class App(ttk.Frame):
     
     self.footer = Footer(self)
     
-    self.CreateMask = CreateMask(self, path="C:/Users/Usuario/Desktop/DataSet/Arboles/Imagenes termales/IR_06255.tif")
-    self.CreateMask.after(250, self.CreateMask.lift)
+    # self.CreateMask = CreateMask(self, path="C:/Users/Usuario/Desktop/DataSet/Arboles/Imagenes termales/IR_06255.tif")
+    # self.CreateMask.after(250, self.CreateMask.lift)
 
 
 if __name__ == "__main__":
