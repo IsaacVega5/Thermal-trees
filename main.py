@@ -23,6 +23,7 @@ class App(ttk.Frame):
     
     self.path = ""
     self.images_list = []
+    self.mask_list = []
     
     self.master = master
     self.Entry_folder = SelectFolder(self)
@@ -31,6 +32,9 @@ class App(ttk.Frame):
     self.Mask_list = MaskList(self)
     
     self.footer = Footer(self)
+    
+    
+    root.resizable(False, False)
 
 
 if __name__ == "__main__":

@@ -59,7 +59,12 @@ class CreateMask(ttk.Toplevel):
     
     
   def save_click(self):
-    self.action(self.vertices)
+    mask = {
+      "size" : self.mask.shape,
+      "vertices" : self.vertices
+    }
+    
+    self.action(mask)
     
     self.destroy()
   

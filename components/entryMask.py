@@ -2,6 +2,7 @@ import tkinter as tk
 import ttkbootstrap as ttk
 from ttkbootstrap.constants import *
 import random
+from ttkbootstrap.dialogs import Messagebox
 
 from windows.createMask import CreateMask
 
@@ -37,6 +38,16 @@ class EntryMask(ttk.Frame):
     return False
   
   def generate_masks(self):
+    if len(self.master.mask_list) > 0:
+      msg = Messagebox.show_question(message="¿Seguro que desea crear nuevamente las máscaras?\nLa máscaras ya existentes se perderán", title='Aviso', parent=None, alert=True, buttons=['Cancelar:secondary', 'Aceptar:primary'])
+      if msg == 'Cancelar':
+        return
+    
+    self.master.mask_list = []
+    self.master.Mask_list.update_masks()
+    self.mask_list = []
+    
+    
     n_mask = int(float(self.entry.get()))
     images_list = self.master.images_list
     mask_list = [images_list[i] for i in random.sample(range(len(images_list)), n_mask)]
@@ -46,8 +57,11 @@ class EntryMask(ttk.Frame):
         if self.master.winfo_exists():  
           new_mask = CreateMask(self.master, path=(self.master.path + "/" + i), action=self.mask_list_set, total_masks=n_mask, current_mask=mask_list.index(i) + 1)
           self.wait_window(new_mask)
+          self.master.mask_list = self.mask_list
+          self.master.Mask_list.update_masks()
       except:
         return 
+
     
   
   def values_set(self):
