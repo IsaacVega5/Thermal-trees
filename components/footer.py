@@ -8,6 +8,7 @@ from PIL import Image
 from matplotlib import pyplot as plt
 
 from services.process import temperature_from_pixel_color
+from windows.maskedHistogram import MaskedHistogram
 
 class Footer(ttk.Frame):
   def __init__(self, master):
@@ -83,24 +84,46 @@ class Footer(ttk.Frame):
     plt.imshow(average_mask, cmap='gray')
     plt.show()
     
-    for image in image_list:
+    temperatures = []
+    from tqdm import tqdm
+    for image in tqdm(image_list):
       img = Image.open(path + "/" + image).convert('L')
       average_mask_img = Image.fromarray(average_mask * 255).convert('L').resize(img.size)
       
       img = np.array(img)
       average_mask_resized = np.array(average_mask_img) / 255
       average_mask_resized = np.where(average_mask_resized >= 0.5, 1, 0)
+      
+      masked_histogram = MaskedHistogram(
+        master = self.master,
+        path = str(path + "/" + image), 
+        mask_vertex=average_mask,
+        total_masks=len(image_list),
+        current_mask=image_list.index(image),
+        action=self.action)
+      self.wait_window(masked_histogram)
 
       values = img[average_mask_resized == 1]
-      max = temperature_from_pixel_color(np.max(values))
+      max = temperature_from_pixel_color(np.min(values))
       mean = temperature_from_pixel_color(np.mean(values))
-      min = temperature_from_pixel_color(np.min(values))
+      min = temperature_from_pixel_color(np.max(values))
       
-      print(f"Max: {max}")
-      print(f"Mean: {mean}")
-      print(f"Min: {min}")
-      print("-------------------------------------")
+     
+      # print("-------------------------------------")
+      # print(f"Max: {max}°C")
+      # print(f"Mean: {mean}°C")
+      # print(f"Min: {min}°C")
+      
+
+    # plt.figure()
+    # plt.hist(temperatures, bins=20)
+    # plt.show()
+
+  
       
       
 
     # Show individual masks
+
+  def action(self):
+    pass 

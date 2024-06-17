@@ -11,7 +11,7 @@ class CreateMask(ttk.Toplevel):
     super().__init__(master)
     x = self.master.winfo_x()
     y = self.master.winfo_y()
-    self.geometry("+%d+%d" % (x + 100, y + 200))
+    self.geometry("+%d+%d" % (x + 100, y + 50))
     
     self.title(f'Mascara {current_mask} de {total_masks}')
     self.master = master
