@@ -42,10 +42,10 @@ class Footer(ttk.Frame):
   
   def validate_numbers(self, value):
     if value.isdigit() or value == '':
+        return True
+    if value.replace('.', '', 1).isdigit() and len(value.split('.')[1]) <= 2:
       return True
-    if value.replace('.', '', 1).isdigit():
-      return True
-    if value[0] == '-':
+    if value[0] == '-' and value[1:].replace('.', '', 1).isdigit() and len(value.split('.')[1]) <= 2:
       return True
     return False
   
@@ -100,7 +100,8 @@ class Footer(ttk.Frame):
         mask_vertex=average_mask,
         total_masks=len(image_list),
         current_mask=image_list.index(image),
-        action=self.action)
+        action=self.action,
+        temperature=(float(self.min_entry.get()), float(self.max_entry.get())))
       self.wait_window(masked_histogram)
 
       values = img[average_mask_resized == 1]
