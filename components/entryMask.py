@@ -39,7 +39,7 @@ class EntryMask(ttk.Frame):
   
   def generate_masks(self):
     if len(self.master.mask_list) > 0:
-      msg = Messagebox.show_question(message="¿Seguro que desea crear nuevamente las máscaras?\nLa máscaras ya existentes se perderán", title='Aviso', parent=None, alert=True, buttons=['Cancelar:secondary', 'Aceptar:primary'])
+      msg = Messagebox.show_question(message="¿Seguro que desea crear nuevamente las máscaras?\nLa máscaras ya existentes se perderán", title='Aviso', parent=self.master, alert=True, buttons=['Cancelar:secondary', 'Aceptar:primary'])
       if msg == 'Cancelar':
         return
     
