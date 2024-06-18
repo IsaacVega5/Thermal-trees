@@ -129,8 +129,8 @@ class MaskedHistogram(ttk.Toplevel):
     
     # Calcular la porosidad
     b1 = len(filtered_temperatures)
-    b2 = len(filtered_temperatures <= Tw)
-    b3 = len(filtered_temperatures >= Td)
+    b2 = len([t for t in filtered_temperatures if t <= Tw])
+    b3 = len([t for t in filtered_temperatures if t >= Td])
     porosidad = (b1 - (b2 + b3)) * 100 / b1 
     
     values = {
