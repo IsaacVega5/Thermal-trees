@@ -8,6 +8,7 @@ from PIL import Image
 
 from services.process import temperature_from_pixel_color
 from windows.maskedHistogram import MaskedHistogram
+from windows.resultTable import ResultTable
 
 class Footer(ttk.Frame):
   def __init__(self, master):
@@ -96,6 +97,9 @@ class Footer(ttk.Frame):
         action=self.add_data,
         temperature=(float(self.min_entry.get()), float(self.max_entry.get())))
       self.wait_window(masked_histogram)
+    
+    if len(self.data) > 0:
+      ResultTable(self.master, self.data)
 
 
   def add_data(self, new_data):

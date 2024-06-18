@@ -18,76 +18,8 @@ class ResultTable(ttk.Toplevel):
     self.title('Resultados')
     self.master = master
     
-    self.data = [{'img': 'C:/Users/Usuario/Desktop/DataSet/Arboles/Imagenes blanco y '
-         'negro/IR_06255.tif',
-  'values': {'CWSI': 0.45998206605321107,
-             'Tc': 12.337622808534183,
-             'Td': 35.71501038171191,
-             'Tw': -7.5750103817119125,
-             'max': 18.8,
-             'median': 14.07,
-             'min': -26.84,
-             'porosidad': -100.0,
-             'std': 10.822505190855956}},
- {'img': 'C:/Users/Usuario/Desktop/DataSet/Arboles/Imagenes blanco y '
-         'negro/IR_06256.tif',
-  'values': {'CWSI': 0.4853050215204277,
-             'Tc': 6.967581001051502,
-             'Td': 14.40760496872397,
-             'Tw': -0.04760496872397102,
-             'max': 9.98,
-             'median': 7.18,
-             'min': -19.95,
-             'porosidad': -100.0,
-             'std': 3.6138024843619854}},
- {'img': 'C:/Users/Usuario/Desktop/DataSet/Arboles/Imagenes blanco y '
-         'negro/IR_06257.tif',
-  'values': {'CWSI': 0.46158504177787907,
-             'Tc': 11.79851868174552,
-             'Td': 34.524816890322185,
-             'Tw': -7.684816890322187,
-             'max': 18.8,
-             'median': 13.42,
-             'min': -24.9,
-             'porosidad': -100.0,
-             'std': 10.552408445161094}},
- {'img': 'C:/Users/Usuario/Desktop/DataSet/Arboles/Imagenes blanco y '
-         'negro/IR_06258.tif',
-  'values': {'CWSI': 0.5361742656512146,
-             'Tc': 1.4555216353974623,
-             'Td': 5.37291413381053,
-             'Tw': -3.07291413381053,
-             'max': 9.98,
-             'median': 1.15,
-             'min': 0.07,
-             'porosidad': -100.0,
-             'std': 2.111457066905265}},
- {'img': 'C:/Users/Usuario/Desktop/DataSet/Arboles/Imagenes blanco y '
-         'negro/IR_06259.tif',
-  'values': {'CWSI': 0.46286644244649694,
-             'Tc': 3.6880077100597912,
-             'Td': 19.917524889362024,
-             'Tw': -10.297524889362023,
-             'max': 9.98,
-             'median': 4.81,
-             'min': -19.95,
-             'porosidad': -100.0,
-             'std': 7.553762444681012}}]
+    self.data = data
     self.saved = False
-    for i in range(20):
-        import random
-        self.data.append({
-          'img': f'C:/Users/Usuario/Desktop/DataSet/Arboles/Imagenes blanco y negro/IR_0625{i+10}.tif',
-          'values': {'CWSI': random.uniform(0.4, 0.6),
-                      'Tc': random.uniform(1.0, 15.0),
-                      'Td': random.uniform(30.0, 50.0),
-                      'Tw': random.uniform(-5.0, 5.0),
-                      'max': random.uniform(9.0, 19.0),
-                      'median': random.uniform(1.0, 15.0),
-                      'min': random.uniform(-20.0, -5.0),
-                      'porosidad': -100.0,
-                      'std': random.uniform(3.0, 10.0)}
-        })
     
     self.tool_bar = ttk.Frame(self)
     self.tool_bar.pack(side=tk.TOP, fill=tk.X)
@@ -202,5 +134,6 @@ class ResultTable(ttk.Toplevel):
         alert=True,
         buttons=['Cancelar:secondary', 'Cerrar:primary']
       )
-      if msg == 'Cerrar':
-        self.destroy()
+      if msg == 'Cancelar':
+        return
+    self.destroy()
