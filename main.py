@@ -33,6 +33,8 @@ class App(ttk.Frame):
     
     self.footer = Footer(self)
     
+    from windows.resultTable import ResultTable
+    self.result_table = ResultTable(self, [])
     
     root.resizable(False, False)
 

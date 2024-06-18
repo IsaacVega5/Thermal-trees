@@ -4,6 +4,7 @@ from ttkbootstrap.constants import *
 import numpy as np
 from PIL import Image, ImageTk
 from RangeSlider.RangeSlider import RangeSliderH 
+from ttkbootstrap.dialogs import Messagebox
 
 import matplotlib as plt
 from matplotlib.backends.backend_tkagg import FigureCanvasTkAgg
@@ -76,7 +77,6 @@ class MaskedHistogram(ttk.Toplevel):
     self.slider.pack(side=tk.LEFT, padx=10, pady=3)
     self.max_value_entry.pack(side=tk.LEFT, padx=10, pady=(5, 10))
     
-    
     self.save_btn = ttk.Button(self.tool_bar, text="Guardar", command=self.save_click)
     self.save_btn.pack(side=tk.RIGHT, padx=10, pady=10)
     
@@ -114,17 +114,48 @@ class MaskedHistogram(ttk.Toplevel):
     min, max = float(self.min_value_entry.get()), float(self.max_value_entry.get())
     filtered_temperatures = [t for t in self.temperature_list if t >= min and t <= max]
     
+    t_min = np.min(filtered_temperatures)
+    t_max = np.max(filtered_temperatures)
+    t_median = np.median(filtered_temperatures)
+    std = np.std(filtered_temperatures)
+    Tw = t_median - std * 2
+    Td = t_median + std * 2
+    
+    # Temperatura promedio de valores entre tw y td
+    temperature_list_tw_td = [t for t in filtered_temperatures if t >= Tw and t <= Td]
+    Tc = np.mean(temperature_list_tw_td)
+    
+    cwsi = ( Tc - Tw ) / ( Td - Tw ) # <- indice térmico
+    
+    # Calcular la porosidad
+    b1 = len(filtered_temperatures)
+    b2 = len(filtered_temperatures <= Tw)
+    b3 = len(filtered_temperatures >= Td)
+    porosidad = (b1 - (b2 + b3)) * 100 / b1 
+    
     values = {
-      'min': np.min(filtered_temperatures),
-      'max': np.max(filtered_temperatures),
-      'mean': np.mean(filtered_temperatures),
-      'median': np.median(filtered_temperatures),
-      'std': np.std(filtered_temperatures)
+      'min': t_min,
+      'max': t_max,
+      'median': t_median,
+      'std': np.std(filtered_temperatures),
+      'Tw': Tw,
+      'Td': Td,
+      'Tc': Tc,
+      'CWSI': cwsi,
+      'porosidad': porosidad
     }
-    self.action(values)
+    
+    self.action({
+      'img': self.path,
+      'values': values
+    })
+    
     self.destroy()
   
   def on_destroy(self):
+    msg = Messagebox.show_question(message="¿Seguro que desea cerrar la ventana?\nLos valores no se guardaran", title='Cerrar ventana', parent=self, alert=True, buttons=['Cancelar:secondary', 'Cerrar:primary'])
+    if msg == 'Cancelar':
+      return
     self.destroy()
   
   def data_from_img(self):

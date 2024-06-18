@@ -77,7 +77,6 @@ class Footer(ttk.Frame):
     
     average_mask = np.where(average_mask >= 0.5, 1, 0)
     
-    print(average_mask)
     
     self.data = []
     for image in image_list:
@@ -98,31 +97,6 @@ class Footer(ttk.Frame):
         temperature=(float(self.min_entry.get()), float(self.max_entry.get())))
       self.wait_window(masked_histogram)
 
-      from pprint import pprint
-      print("-------------------------------------")
-      pprint(self.data)
-      
-      # values = img[average_mask_resized == 1]
-      # max = temperature_from_pixel_color(np.min(values))
-      # mean = temperature_from_pixel_color(np.mean(values))
-      # min = temperature_from_pixel_color(np.max(values))
-      
-     
-      # print("-------------------------------------")
-      # print(f"Max: {max}°C")
-      # print(f"Mean: {mean}°C")
-      # print(f"Min: {min}°C")
-      
-
-    # plt.figure()
-    # plt.hist(temperatures, bins=20)
-    # plt.show()
-
-  
-      
-      
-
-    # Show individual masks
 
   def add_data(self, new_data):
     self.data.append(new_data)

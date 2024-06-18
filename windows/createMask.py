@@ -123,7 +123,7 @@ class CreateMask(ttk.Toplevel):
     self.mask_label.image = self.mask_img
     
   def on_destroy(self):
-    msg = Messagebox.show_question(message="¿Seguro que desea cerrar la ventana?\nLa mascara no se guardará", title='Cerrar ventana', parent=None, alert=True, buttons=['Cancelar:secondary', 'Cerrar:primary'])
+    msg = Messagebox.show_question(message="¿Seguro que desea cerrar la ventana?\nLa máscara no se guardará", title='Cerrar ventana', parent=None, alert=True, buttons=['Cancelar:secondary', 'Cerrar:primary'])
     if msg == 'Cancelar':
       return
     self.destroy()
