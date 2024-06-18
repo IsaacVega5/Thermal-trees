@@ -5,7 +5,6 @@ from ttkbootstrap.dialogs import Messagebox
 import numpy as np
 import cv2
 from PIL import Image
-from matplotlib import pyplot as plt
 
 from services.process import temperature_from_pixel_color
 from windows.maskedHistogram import MaskedHistogram
@@ -16,6 +15,7 @@ class Footer(ttk.Frame):
     self.pack(fill=tk.X, side=tk.BOTTOM)
 
     self.master = master
+    self.data = []
     
     self.min_value = -30.5
     self.max_value = 24.4
@@ -79,14 +79,8 @@ class Footer(ttk.Frame):
     
     print(average_mask)
     
-  
-    plt.figure()
-    plt.imshow(average_mask, cmap='gray')
-    plt.show()
-    
-    temperatures = []
-    from tqdm import tqdm
-    for image in tqdm(image_list):
+    self.data = []
+    for image in image_list:
       img = Image.open(path + "/" + image).convert('L')
       average_mask_img = Image.fromarray(average_mask * 255).convert('L').resize(img.size)
       
@@ -100,14 +94,18 @@ class Footer(ttk.Frame):
         mask_vertex=average_mask,
         total_masks=len(image_list),
         current_mask=image_list.index(image),
-        action=self.action,
+        action=self.add_data,
         temperature=(float(self.min_entry.get()), float(self.max_entry.get())))
       self.wait_window(masked_histogram)
 
-      values = img[average_mask_resized == 1]
-      max = temperature_from_pixel_color(np.min(values))
-      mean = temperature_from_pixel_color(np.mean(values))
-      min = temperature_from_pixel_color(np.max(values))
+      from pprint import pprint
+      print("-------------------------------------")
+      pprint(self.data)
+      
+      # values = img[average_mask_resized == 1]
+      # max = temperature_from_pixel_color(np.min(values))
+      # mean = temperature_from_pixel_color(np.mean(values))
+      # min = temperature_from_pixel_color(np.max(values))
       
      
       # print("-------------------------------------")
@@ -126,5 +124,5 @@ class Footer(ttk.Frame):
 
     # Show individual masks
 
-  def action(self):
-    pass 
+  def add_data(self, new_data):
+    self.data.append(new_data)

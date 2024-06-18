@@ -21,7 +21,7 @@ class MaskedHistogram(ttk.Toplevel):
     y = self.master.winfo_y()
     self.geometry("+%d+%d" % (x + 100, y + 50))
     
-    self.title(f'Histograma de la mascara {current_mask} de {total_masks}')
+    self.title(f'Histograma de la mascara {current_mask +1} de {total_masks}')
     self.master = master
     self.path = path
     self.action = action
@@ -111,7 +111,18 @@ class MaskedHistogram(ttk.Toplevel):
     self.right_slider.trace_add('write', self.slider_change)
   
   def save_click(self):
-    pass
+    min, max = float(self.min_value_entry.get()), float(self.max_value_entry.get())
+    filtered_temperatures = [t for t in self.temperature_list if t >= min and t <= max]
+    
+    values = {
+      'min': np.min(filtered_temperatures),
+      'max': np.max(filtered_temperatures),
+      'mean': np.mean(filtered_temperatures),
+      'median': np.median(filtered_temperatures),
+      'std': np.std(filtered_temperatures)
+    }
+    self.action(values)
+    self.destroy()
   
   def on_destroy(self):
     self.destroy()
