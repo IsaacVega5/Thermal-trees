@@ -26,8 +26,9 @@ class MaskedHistogram(ttk.Toplevel):
     self.path = path
     self.action = action
     self.mask_vertex = mask_vertex
-    self.temperature_list = []
+    self.temperature_list = None
     self.bins_fig = 50
+    self.temperature_range = [-30.5, 24.4]
     
     self.full_img = Image.open(path).convert('L')
     self.full_mask = Image.fromarray(mask_vertex).convert('L').resize(self.full_img.size)
@@ -56,14 +57,9 @@ class MaskedHistogram(ttk.Toplevel):
     self.min_value_entry = ttk.Entry(self.tool_bar, width=6, validate='key', validatecommand=(self.master.register(self.validate_numbers), '%P'))
     self.min_value_entry.pack(side=tk.LEFT, padx=10, pady=(10,5))
     self.max_value_entry = ttk.Entry(self.tool_bar, width=6, validate='key', validatecommand=(self.master.register(self.validate_numbers), '%P'))
-    
-    self.min_value_entry.bind('<KeyRelease>', self.on_entry_change)
-    self.max_value_entry.bind('<KeyRelease>', self.on_entry_change)
         
     self.left_slider = tk.DoubleVar(value=self.min)
-    self.left_slider.trace_add('write', self.slider_change)
     self.right_slider = tk.DoubleVar(value=self.max)
-    self.right_slider.trace_add('write', self.slider_change)
     self.slider = RangeSliderH(self.tool_bar,
                                [self.left_slider, self.right_slider], 
                                min_val=self.min, max_val=self.max, padX = 2,
@@ -75,12 +71,11 @@ class MaskedHistogram(ttk.Toplevel):
                                show_value=False,
                                Height=25,
                                Width=350,
-                               font_size=1)
+                               font_size=1,
+                               step_size=0)
     self.slider.pack(side=tk.LEFT, padx=10, pady=3)
     self.max_value_entry.pack(side=tk.LEFT, padx=10, pady=(5, 10))
     
-    self.min_value_entry.insert(0, self.min)
-    self.max_value_entry.insert(0, self.max)
     
     self.save_btn = ttk.Button(self.tool_bar, text="Guardar", command=self.save_click)
     self.save_btn.pack(side=tk.RIGHT, padx=10, pady=10)
@@ -110,6 +105,10 @@ class MaskedHistogram(ttk.Toplevel):
     self.resizable(False, False)
     self.data_from_img()
     self.set_temperature_pixel(width//2, height//2)
+    self.min_value_entry.insert(0, self.min)
+    self.max_value_entry.insert(0, self.max)
+    self.left_slider.trace_add('write', self.slider_change)
+    self.right_slider.trace_add('write', self.slider_change)
   
   def save_click(self):
     pass
@@ -120,18 +119,8 @@ class MaskedHistogram(ttk.Toplevel):
   def data_from_img(self):
     img = self.full_img
     mask = self.full_mask
-    temperature_list = []
-      
-    for i in range(img.shape[0]):
-      for j in range(img.shape[1]):
-        if mask[i][j] == 0:
-          temperature_list.append(temperature_from_pixel_color(img[i][j]))
           
-    temperature_list_new = img[mask == 1].flatten()
-    
-    if not np.array_equal(temperature_list_new, temperature_list):
-      print("Warning: temperature_list_new and temperature_list are not equal")
-          
+    temperature_list = np.array([temperature_from_pixel_color(pixel) for pixel in img[mask == 1].flatten()])
     self.temperature_list = temperature_list
     self.ax.hist(temperature_list, bins=self.bins_fig)
     self.canvas.draw()
@@ -165,27 +154,23 @@ class MaskedHistogram(ttk.Toplevel):
     
   def validate_numbers(self, value):
     if value.isdigit() or value == '':
+      self.update_histogram()
       return True
-    if value.replace('.', '', 1).isdigit() and len(value.split('.')[1]) <= 2:
+    if value.replace('.', '', 1).isdigit():
+      self.update_histogram()
       return True
-    if value[0] == '-' and value[1:].replace('.', '', 1).isdigit() and len(value.split('.')[1]) <= 2:
+    if value[0] == '-' or value[1:].replace('.', '', 1).isdigit():
+      self.update_histogram()
       return True
     return False
-  
-  def on_entry_change(self, event):
-    try:
-      self.left_slider.set(float(self.min_value_entry.get()))
-      self.right_slider.set(float(self.max_value_entry.get()))
-      self.update_histogram()
-    except:
-      pass
 
   def update_histogram(self):
     self.update_histogram_cancel()
     self.update_histogram_task = self.master.after(500, self.update_histogram_perform)
     
   def update_histogram_perform(self):
-    min, max = float(self.left_slider.get()), float(self.right_slider.get())
+    if self.temperature_list is None: return
+    min, max = float(self.min_value_entry.get()), float(self.max_value_entry.get())
     new_temperature_list = [t for t in self.temperature_list if t >= min and t <= max]
     self.ax.clear()
     self.ax.hist(new_temperature_list, bins=self.bins_fig)
