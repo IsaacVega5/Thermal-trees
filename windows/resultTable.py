@@ -73,7 +73,7 @@ class ResultTable(ttk.Toplevel):
              'min': -19.95,
              'porosidad': -100.0,
              'std': 7.553762444681012}}]
-    
+    self.saved = False
     for i in range(20):
         import random
         self.data.append({
@@ -137,10 +137,13 @@ class ResultTable(ttk.Toplevel):
     )
     self.table.pack(side=tk.TOP, fill=tk.BOTH, expand=True)
     self.resizable(True, True)
+    
+    self.protocol("WM_DELETE_WINDOW", self.on_destroy)
   
   def save(self):
     destiny_path = filedialog.asksaveasfilename(defaultextension=".xlsx", filetypes=[("Excel", ".xlsx")])
-    if destiny_path is None:
+  
+    if destiny_path is None or destiny_path == '':
       return  
     
     workBook = xlsxwriter.Workbook(destiny_path)
@@ -179,6 +182,7 @@ class ResultTable(ttk.Toplevel):
         if msg == 'Cancelar':
           return
     
+    self.saved = True
     msg = Messagebox.show_question(
       title="Guardado",
       message = f"Se guardo el archivo {destiny_path}",
@@ -188,3 +192,15 @@ class ResultTable(ttk.Toplevel):
     )
     if msg == 'Abrir':
       os.startfile(destiny_path)
+      
+  def on_destroy(self):
+    if not self.saved:
+      msg = Messagebox.show_question(
+        title="¿Desea guardar?",
+        message = "¿Seguro que desea cerrar?\nLos valores no se guardaran",
+        parent=self,
+        alert=True,
+        buttons=['Cancelar:secondary', 'Cerrar:primary']
+      )
+      if msg == 'Cerrar':
+        self.destroy()
