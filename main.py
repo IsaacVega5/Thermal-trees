@@ -8,9 +8,9 @@ from components.entryMask import EntryMask
 from components.maskList import MaskList
 from components.footer import Footer
 
-root = ttk.Window( title="Thermal Trees", iconphoto = './assets/three-blue.png')
+root = ttk.Window( title="Thermal Trees", iconphoto = './assets/tree-blue.png')
 
-root.iconphoto = './assets/three-blue.png'
+root.iconphoto = './assets/tree-blue.png'
 
 
 class App(ttk.Frame):

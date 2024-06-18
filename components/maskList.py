@@ -22,7 +22,7 @@ class MaskList(ttk.Frame):
     self.mask_list_frame = ScrolledFrame(self, height=150, s_bootstyle="primary")
     self.mask_list_frame.pack(side=tk.LEFT, fill=tk.X, expand=True)
     
-    self.average_mask = ImageTk.PhotoImage(Image.open("./assets/three-blue.png").resize((50, 50)))
+    self.average_mask = ImageTk.PhotoImage(Image.open("./assets/tree-blue.png").resize((50, 50)))
     self.average_label = tk.Label(self, image=self.average_mask, height=150, width=150)
     self.average_label.pack(side=tk.RIGHT, fill=tk.X)
   

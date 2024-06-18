@@ -29,7 +29,7 @@ class ImagesList(ttk.Frame):
     self.scrollbar.config(command=self.list.yview)
     
     
-    self.three_img = ImageTk.PhotoImage(Image.open("./assets/three-blue.png").resize((50, 50)))
+    self.three_img = ImageTk.PhotoImage(Image.open("./assets/tree-blue.png").resize((50, 50)))
     self.three_label = tk.Label(self.img_prev_frame, image=self.three_img, height=150, width=150)
     self.three_label.pack(side=tk.TOP, fill=tk.X)
     
