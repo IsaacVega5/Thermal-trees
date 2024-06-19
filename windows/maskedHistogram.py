@@ -88,12 +88,12 @@ class MaskedHistogram(ttk.Toplevel):
     self.ax = self.fig.add_subplot(111)
     
     self.canvas = FigureCanvasTkAgg(self.fig, master=self)
-    self.canvas.get_tk_widget().pack(side=tk.LEFT, fill=tk.BOTH, expand=True)
+    self.canvas.get_tk_widget().pack(side=tk.LEFT, expand=True)
     self.canvas.draw()
     
     self.canvas_masked_img = tk.Canvas(self, width=width, height=height)
     self.canvas_masked_img.create_image(0, 0, image=self.masked_img, anchor=tk.NW)
-    self.canvas_masked_img.pack(side=tk.RIGHT, fill=tk.BOTH, expand=True)
+    self.canvas_masked_img.pack(side=tk.RIGHT, fill=tk.BOTH, expand=True, padx=5, pady=(47,5))
     self.canvas_masked_img.bind("<ButtonRelease-1>", self.click_temperature)
     
     self.temperature_label = ttk.Label(self.canvas_masked_img, text="Temperatura: ", bootstyle="inverse-danger")
