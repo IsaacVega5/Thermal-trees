@@ -5,6 +5,7 @@ import random
 from ttkbootstrap.dialogs import Messagebox
 
 from windows.createMask import CreateMask
+from constants import SELECTION_MASK
 
 class EntryMask(ttk.Frame):
   def __init__(self, master):
@@ -21,10 +22,14 @@ class EntryMask(ttk.Frame):
     self.entry = ttk.Entry(self, width=10, validate='key', validatecommand=(self.master.register(self.validate_numbers), '%P'))
     self.entry.pack(side=tk.LEFT, fill=tk.X, padx=(0,5))
     
-    self.slider = ttk.Scale(self, from_=0, to=len(self.master.images_list), orient=HORIZONTAL, command=self.slider_changed, length=560)
+    self.slider = ttk.Scale(self, from_=0, to=len(self.master.images_list), orient=HORIZONTAL, command=self.slider_changed, length=450)
     default_value_mask = 20 if len(self.master.images_list) > 20 else len(self.master.images_list) // 3
     self.slider.set(default_value_mask)
     self.slider.pack(side=tk.LEFT, fill=tk.X, padx=5)
+    
+    self.selector = ttk.Combobox(self, width=15,values=SELECTION_MASK, state="readonly", foreground="#4986ef", background="#ffffff", bootstyle="primary")
+    self.selector.current(0)
+    self.selector.pack(side=tk.LEFT)
     
     self.button = ttk.Button(self, text="Crear", command=self.generate_masks)
     self.button.pack(side=tk.RIGHT)
