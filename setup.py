@@ -2,7 +2,7 @@ from cx_Freeze import setup, Executable
 
 # Dependencies are automatically detected, but it might need
 # fine tuning.
-build_options = {'packages': ['ttkbootstrap'], 'excludes': [], 'include_files':['assets/'] }
+build_options = {'packages': ['ttkbootstrap'], 'excludes': [], 'include_files':['assets/', 'README.md'] }
 
 base = 'gui'
 
