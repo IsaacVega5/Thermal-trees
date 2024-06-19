@@ -29,7 +29,7 @@ class MaskedHistogram(ttk.Toplevel):
     self.mask_vertex = mask_vertex
     self.temperature_list = None
     self.bins_fig = 50
-    self.temperature_range = [-30.5, 24.4]
+    self.temperature_range = temperature
     
     self.full_img = Image.open(path).convert('L')
     self.full_mask = Image.fromarray(mask_vertex).convert('L').resize(self.full_img.size)
@@ -161,8 +161,9 @@ class MaskedHistogram(ttk.Toplevel):
   def data_from_img(self):
     img = self.full_img
     mask = self.full_mask
-          
-    temperature_list = np.array([temperature_from_pixel_color(pixel) for pixel in img[mask == 1].flatten()])
+    
+    temperature_range = (float(self.min_value_entry.get()), float(self.max_value_entry.get()))
+    temperature_list = np.array([temperature_from_pixel_color(pixel, temperature_range) for pixel in img[mask == 1].flatten()])
     self.temperature_list = temperature_list
     self.ax.hist(temperature_list, bins=self.bins_fig, color="#4582ec")
     self.canvas.draw()
@@ -178,7 +179,8 @@ class MaskedHistogram(ttk.Toplevel):
     img = self.img.resize((500, int(height / width * 500)))
     img = np.array(img)
     pixel = img[y][x][0]
-    temperature = temperature_from_pixel_color(pixel)
+    temperature_range = (float(self.min_value_entry.get()), float(self.max_value_entry.get()))
+    temperature = temperature_from_pixel_color(pixel, temperature_range)
     self.temperature_label.configure(text=f"Temperatura: {temperature}°C")
     
   def dot_draw(self, x, y):

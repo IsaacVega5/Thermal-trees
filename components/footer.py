@@ -6,7 +6,6 @@ import numpy as np
 import cv2
 from PIL import Image
 
-from services.process import temperature_from_pixel_color
 from windows.maskedHistogram import MaskedHistogram
 from windows.resultTable import ResultTable
 
