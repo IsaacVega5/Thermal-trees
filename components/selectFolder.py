@@ -19,7 +19,7 @@ class SelectFolder(ttk.Frame):
     self.entry.grid(row=1, column=0, padx=(0,5), pady=(0,5))
 
     self.button = ttk.Button(self, text="Seleccionar", command=self.selectFolder)
-    self.button.grid(row=1, column=2, padx=0, pady=5)
+    self.button.grid(row=1, column=2, padx=0, pady=(0,5))
     
   def selectFolder(self):
     folder = filedialog.askdirectory()
