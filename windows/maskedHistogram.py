@@ -12,7 +12,6 @@ from matplotlib.figure import Figure
 
 from services.process import temperature_from_pixel_color
 
-
 import cv2
 
 class MaskedHistogram(ttk.Toplevel):
@@ -103,10 +102,10 @@ class MaskedHistogram(ttk.Toplevel):
     self.protocol("WM_DELETE_WINDOW", self.on_destroy)
     
     self.resizable(False, False)
-    self.data_from_img()
-    self.set_temperature_pixel(width//2, height//2)
     self.min_value_entry.insert(0, self.min)
     self.max_value_entry.insert(0, self.max)
+    self.data_from_img()
+    self.set_temperature_pixel(width//2, height//2)
     self.left_slider.trace_add('write', self.slider_change)
     self.right_slider.trace_add('write', self.slider_change)
   
