@@ -32,6 +32,9 @@ class MaskList(ttk.Frame):
     if len(self.mask_list_frame.winfo_children()) > 0:
       for widget in self.mask_list_frame.winfo_children():
         widget.destroy()
+        
+      self.average_label.configure(image=self.average_mask)
+      self.average_label.image = self.average_mask
     
     mask_array_list = []
     for mask in mask_list:

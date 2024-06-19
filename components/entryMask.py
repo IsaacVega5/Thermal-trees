@@ -52,7 +52,6 @@ class EntryMask(ttk.Frame):
     self.master.Mask_list.update_masks()
     self.mask_list = []
     
-    
     n_mask = int(float(self.entry.get()))
     images_list = self.master.images_list
     mask_list = [images_list[i] for i in random.sample(range(len(images_list)), n_mask)]
