@@ -52,14 +52,29 @@ class EntryMask(ttk.Frame):
     self.master.Mask_list.update_masks()
     self.mask_list = []
     
+    selected_type = self.selector.get()
+    
     n_mask = int(float(self.entry.get()))
-    images_list = self.master.images_list
-    mask_list = [images_list[i] for i in random.sample(range(len(images_list)), n_mask)]
+    mask_list = []
+    
+    if selected_type == 'Primeros':
+      images_list = self.master.images_list
+      mask_list = images_list[:n_mask]
+    elif selected_type == 'Últimos':
+      images_list = self.master.images_list
+      mask_list = images_list[-n_mask:]
+    elif selected_type == 'Seleccionados':
+      selected = self.master.Images_list.list.selection()
+      for item in selected:
+        mask_list.append(self.master.Images_list.list.item(item)['text'])
+    else:
+      images_list = self.master.images_list
+      mask_list = [images_list[i] for i in random.sample(range(len(images_list)), n_mask)]
     
     for i in mask_list:
       try:
         if self.master.winfo_exists():  
-          new_mask = CreateMask(self.master, path=(self.master.path + "/" + i), action=self.mask_list_set, total_masks=n_mask, current_mask=mask_list.index(i) + 1)
+          new_mask = CreateMask(self.master, path=(self.master.path + "/" + i), action=self.mask_list_set, total_masks=len(mask_list), current_mask=mask_list.index(i) + 1)
           self.wait_window(new_mask)
           self.master.mask_list = self.mask_list
           self.master.Mask_list.update_masks()
