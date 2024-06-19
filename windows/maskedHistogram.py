@@ -164,7 +164,7 @@ class MaskedHistogram(ttk.Toplevel):
           
     temperature_list = np.array([temperature_from_pixel_color(pixel) for pixel in img[mask == 1].flatten()])
     self.temperature_list = temperature_list
-    self.ax.hist(temperature_list, bins=self.bins_fig)
+    self.ax.hist(temperature_list, bins=self.bins_fig, color="#4582ec")
     self.canvas.draw()
   def click_temperature(self, event):
     x, y = event.x, event.y
@@ -215,7 +215,7 @@ class MaskedHistogram(ttk.Toplevel):
     min, max = float(self.min_value_entry.get()), float(self.max_value_entry.get())
     new_temperature_list = [t for t in self.temperature_list if t >= min and t <= max]
     self.ax.clear()
-    self.ax.hist(new_temperature_list, bins=self.bins_fig)
+    self.ax.hist(new_temperature_list, bins=self.bins_fig, color="#4582ec")
     self.canvas.draw()
     
   def update_histogram_cancel(self):
