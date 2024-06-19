@@ -15,14 +15,13 @@ class EntryMask(ttk.Frame):
     self.master = master
     self.mask_list = []
     
-    self.label = ttk.Label(self, text="Número de mascaras", justify="left", anchor="w")
-    self.label.pack(side=tk.TOP, fill=tk.X)
+    self.label = ttk.Label(self, text="Crear máscaras", justify="left", anchor="w")
+    self.label.pack(side=tk.TOP, fill=tk.X, pady=(5,0))
     
-  
     self.entry = ttk.Entry(self, width=10, validate='key', validatecommand=(self.master.register(self.validate_numbers), '%P'))
     self.entry.pack(side=tk.LEFT, fill=tk.X, padx=(0,5))
     
-    self.slider = ttk.Scale(self, from_=0, to=len(self.master.images_list), orient=HORIZONTAL, command=self.slider_changed, length=450)
+    self.slider = ttk.Scale(self, from_=0, to=len(self.master.images_list), orient=HORIZONTAL, command=self.slider_changed, length=465)
     default_value_mask = 20 if len(self.master.images_list) > 20 else len(self.master.images_list) // 3
     self.slider.set(default_value_mask)
     self.slider.pack(side=tk.LEFT, fill=tk.X, padx=5)
