@@ -31,3 +31,4 @@ class SelectFolder(ttk.Frame):
     self.master.path = folder
     self.master.Images_list.read_folder()
     self.master.Entry_mask.values_set()
+    self.master.footer.values_set()
