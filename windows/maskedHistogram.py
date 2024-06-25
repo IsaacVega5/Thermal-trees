@@ -15,7 +15,7 @@ from services.process import temperature_from_pixel_color
 import cv2
 
 class MaskedHistogram(ttk.Toplevel):
-  def __init__(self, master, path, mask_vertex, total_masks, current_mask, action, temperature):
+  def __init__(self, master, path, mask_vertex, total_masks, current_mask, action, temperature, action_type = 'calculate'):
     super().__init__(master)
     x = self.master.winfo_x()
     y = self.master.winfo_y()
@@ -25,6 +25,7 @@ class MaskedHistogram(ttk.Toplevel):
     self.master = master
     self.path = path
     self.action = action
+    self.action_type = action_type
     self.mask_vertex = mask_vertex
     self.temperature_list = None
     self.bins_fig = 50
@@ -111,6 +112,12 @@ class MaskedHistogram(ttk.Toplevel):
   
   def save_click(self):
     min, max = float(self.min_value_entry.get()), float(self.max_value_entry.get())
+    
+    if self.action_type == 'range':
+      self.action([min, max])
+      self.destroy()
+      return
+    
     filtered_temperatures = [t for t in self.temperature_list if t >= min and t <= max]
     
     t_min = np.min(filtered_temperatures)

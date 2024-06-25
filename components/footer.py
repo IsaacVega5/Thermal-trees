@@ -5,6 +5,7 @@ from ttkbootstrap.dialogs import Messagebox
 import numpy as np
 import cv2
 from PIL import Image
+import random
 
 from windows.maskedHistogram import MaskedHistogram
 from windows.resultTable import ResultTable
@@ -18,6 +19,7 @@ class Footer(ttk.Frame):
 
     self.master = master
     self.data = []
+    self.temp_ranges = []
     
     self.min_value = -30.5
     self.max_value = 24.4
@@ -69,6 +71,8 @@ class Footer(ttk.Frame):
     mask_list = self.master.mask_list
     image_list = self.master.images_list
     path = self.master.path
+    method_name = self.selector.get()
+    n_entry = int(float(self.n_range_entry.get()))
     
     if len(image_list) == 0:
       Messagebox.show_error(message="No hay imágenes cargadas", title='Aviso', parent=None, alert=True, buttons=["Aceptar:primary"])
@@ -95,28 +99,73 @@ class Footer(ttk.Frame):
     
     
     self.data = []
-    for image in image_list:
-      img = Image.open(path + "/" + image).convert('L')
-      average_mask_img = Image.fromarray(average_mask * 255).convert('L').resize(img.size)
-      
-      img = np.array(img)
-      average_mask_resized = np.array(average_mask_img) / 255
-      average_mask_resized = np.where(average_mask_resized >= 0.5, 1, 0)
-      
-      masked_histogram = MaskedHistogram(
-        master = self.master,
-        path = str(path + "/" + image), 
-        mask_vertex=average_mask,
-        total_masks=len(image_list),
-        current_mask=image_list.index(image),
-        action=self.add_data,
-        temperature=(float(self.min_entry.get()), float(self.max_entry.get())))
-      self.wait_window(masked_histogram)
     
+    if method_name == 'Individual':
+      for image in image_list:
+        img = Image.open(path + "/" + image).convert('L')
+        average_mask_img = Image.fromarray(average_mask * 255).convert('L').resize(img.size)
+        
+        img = np.array(img)
+        average_mask_resized = np.array(average_mask_img) / 255
+        average_mask_resized = np.where(average_mask_resized >= 0.5, 1, 0)
+        
+        masked_histogram = MaskedHistogram(
+          master = self.master,
+          path = str(path + "/" + image), 
+          mask_vertex=average_mask,
+          total_masks=len(image_list),
+          current_mask=image_list.index(image),
+          action=self.add_data,
+          temperature=(float(self.min_entry.get()), float(self.max_entry.get())))
+        self.wait_window(masked_histogram)
+    
+    else:
+      range_list = []
+      if method_name == 'Primeros':
+        range_list = image_list[:n_entry]
+      elif method_name == 'Últimos':
+        range_list = image_list[-n_entry:]
+      elif method_name == 'Seleccionados':
+        selected = self.master.Images_list.list.selection()
+        for item in selected:
+          range_list.append(self.master.Images_list.list.item(item)['text'])
+      else:
+        range_list = [image_list[i] for i in random.sample(range(len(image_list)), n_entry)]
+      
+      self.temp_ranges = []
+      for image in range_list:
+        img = Image.open(path + "/" + image).convert('L')
+        average_mask_img = Image.fromarray(average_mask * 255).convert('L').resize(img.size)
+        
+        img = np.array(img)
+        average_mask_resized = np.array(average_mask_img) / 255
+        average_mask_resized = np.where(average_mask_resized >= 0.5, 1, 0)
+        
+        masked_histogram = MaskedHistogram(
+          master = self.master,
+          path = str(path + "/" + image), 
+          mask_vertex=average_mask,
+          total_masks=len(range_list),
+          current_mask=range_list.index(image) + 1,
+          action=self.add_temp_ranges,
+          action_type='range',
+          temperature=(float(self.min_entry.get()), float(self.max_entry.get())))
+        self.wait_window(masked_histogram)
+      
+  
+      average_min = sum([x[0] for x in self.temp_ranges]) // len(self.temp_ranges)
+      average_max = sum([x[1] for x in self.temp_ranges]) // len(self.temp_ranges)
+      
+      
+      return
+      
+      
     if len(self.data) > 0:
       ResultTable(self.master, self.data)
 
-
+  def add_temp_ranges(self, range):
+    self.temp_ranges.append(range)
+  
   def add_data(self, new_data):
     self.data.append(new_data)
     
