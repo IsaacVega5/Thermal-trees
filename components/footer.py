@@ -12,6 +12,8 @@ from windows.resultTable import ResultTable
 
 from constants import TEMPERATURE_RANGE_METHODS
 
+from services.process import temperature_from_pixel_color, values_from_temperature_list
+
 class Footer(ttk.Frame):
   def __init__(self, master):
     super().__init__(master)
@@ -112,7 +114,7 @@ class Footer(ttk.Frame):
         masked_histogram = MaskedHistogram(
           master = self.master,
           path = str(path + "/" + image), 
-          mask_vertex=average_mask,
+          mask_vertex=average_mask_resized,
           total_masks=len(image_list),
           current_mask=image_list.index(image),
           action=self.add_data,
@@ -144,7 +146,7 @@ class Footer(ttk.Frame):
         masked_histogram = MaskedHistogram(
           master = self.master,
           path = str(path + "/" + image), 
-          mask_vertex=average_mask,
+          mask_vertex=average_mask_resized,
           total_masks=len(range_list),
           current_mask=range_list.index(image) + 1,
           action=self.add_temp_ranges,
@@ -152,12 +154,31 @@ class Footer(ttk.Frame):
           temperature=(float(self.min_entry.get()), float(self.max_entry.get())))
         self.wait_window(masked_histogram)
       
-  
-      average_min = sum([x[0] for x in self.temp_ranges]) // len(self.temp_ranges)
-      average_max = sum([x[1] for x in self.temp_ranges]) // len(self.temp_ranges)
+      if len(self.temp_ranges) > 0:
+        average_min = sum([x[0] for x in self.temp_ranges]) // len(self.temp_ranges)
+        average_max = sum([x[1] for x in self.temp_ranges]) // len(self.temp_ranges)
+      else:
+        average_min = float(self.min_entry.get())
+        average_max = float(self.max_entry.get())
       
-      
-      return
+      for img in image_list:
+        img = Image.open(path + "/" + image).convert('L')
+        average_mask_img = Image.fromarray(average_mask * 255).convert('L').resize(img.size)
+        
+        img = np.array(img)
+        average_mask_resized = np.array(average_mask_img) / 255
+        average_mask_resized = np.where(average_mask_resized >= 0.5, 1, 0)
+        
+        temperature_list = np.array([temperature_from_pixel_color(pixel, (average_min, average_max)) for pixel in img[average_mask_resized == 1].flatten()])
+        filtered_temperature_list = [t for t in temperature_list if t >= average_min and t <= average_max]
+        
+        values = values_from_temperature_list(filtered_temperature_list)
+        
+        self.add_data({
+          "img": path + "/" + image,
+          "values": values
+        })
+        
       
       
     if len(self.data) > 0:

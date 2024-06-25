@@ -10,7 +10,7 @@ import matplotlib as plt
 from matplotlib.backends.backend_tkagg import FigureCanvasTkAgg
 from matplotlib.figure import Figure
 
-from services.process import temperature_from_pixel_color
+from services.process import temperature_from_pixel_color, values_from_temperature_list
 
 import cv2
 
@@ -119,37 +119,8 @@ class MaskedHistogram(ttk.Toplevel):
       return
     
     filtered_temperatures = [t for t in self.temperature_list if t >= min and t <= max]
-    
-    t_min = np.min(filtered_temperatures)
-    t_max = np.max(filtered_temperatures)
-    t_median = np.median(filtered_temperatures)
-    std = np.std(filtered_temperatures)
-    Tw = t_median - std * 2
-    Td = t_median + std * 2
-    
-    # Temperatura promedio de valores entre tw y td
-    temperature_list_tw_td = [t for t in filtered_temperatures if t >= Tw and t <= Td]
-    Tc = np.mean(temperature_list_tw_td)
-    
-    cwsi = ( Tc - Tw ) / ( Td - Tw ) # <- indice térmico
-    
-    # Calcular la porosidad
-    b1 = len(filtered_temperatures)
-    b2 = len([t for t in filtered_temperatures if t <= Tw])
-    b3 = len([t for t in filtered_temperatures if t >= Td])
-    porosidad = (b1 - (b2 + b3)) * 100 / b1 
-    
-    values = {
-      'min': t_min,
-      'max': t_max,
-      'median': t_median,
-      'std': np.std(filtered_temperatures),
-      'Tw': Tw,
-      'Td': Td,
-      'Tc': Tc,
-      'CWSI': cwsi,
-      'porosidad': porosidad
-    }
+  
+    values = values_from_temperature_list(filtered_temperatures)
     
     self.action({
       'img': self.path,
