@@ -39,12 +39,19 @@ Luego de haber seleccionado el area de interés se debe hacer click en `Guardar`
 Luego de tener las mascarás podemos obtener la temperatura de las imágenes con el botón `Obtener t°` en la parte inferior de la pantalla. Por defecto para obtener la temperatura se utilizará el rango de -30.5 a 24.4, pero se puede modificar en la parte inferior izquierda de la pantalla antes de haber echo click en `Obtener t°`.
 
 ### Filtrar temperatura
-Luego de haber echo click en `Obtener t°` se debe filtrar el rango de temperatura que se utilizarán en cada imagen para procesar la información. Se abrirán ventanas una tras otra hasta que se hayan filtrado todas las imágenes.
+Luego de haber echo click en `Obtener t°` se debe filtrar el rango de temperatura que se utilizarán en cada imagen para procesar la información. Por defecto se utilizarán imágenes al azar para crear un rango promedio de temperatura, pero puedes seleccionar distintos modos para el filtrado de temperatura.
 
 En la ventana de filtro, aparecerá un histograma y la imagen con la mascara promedio aplicada. En donde podremos hacer click en cualquier parte de la imagen para obtener la temperatura correspondiente.
 
 Se debe hacer click en guardar para guardar el rango de temperaturas deseado, si se cierra la ventana sin guardar los valores de la imagen no se consideraran para el resultado final.
 
+#### Métodos de filtrado
+ - **Aleatorios:** Se utilizaran imágenes de forma aleatoria para obtener un rango de temperatura promedio que se aplicara a todas las imágenes.
+ - **Primeros**: Se seleccionarán las primeras imágenes de la lista para obtener un rango de temperatura promedio.
+ - **Últimos**: Se seleccionarán las último imágenes de la lista para obtener un rango de temperatura promedio.
+ - **Seleccionados:** Se utilizarán las imágenes que estén seleccionadas en la lista para obtener un rango de temperatura promedio.
+ - **Individual:** Se seleccionara el rango de forma individual de cada imagen por separado.
+  
 ### Visualización de los datos
 Luego de haber filtrado la temperatura de cada imagen se abrirá una ventana con todos los datos obtenidos de cada imagen, en donde se puede ver los datos antes de guardarlos en un archivo xlsx.
 
