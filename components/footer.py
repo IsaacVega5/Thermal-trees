@@ -9,6 +9,7 @@ import random
 
 from windows.maskedHistogram import MaskedHistogram
 from windows.resultTable import ResultTable
+from components.progressBar import ProgressBar
 
 from constants import TEMPERATURE_RANGE_METHODS
 
@@ -40,7 +41,6 @@ class Footer(ttk.Frame):
     self.max_entry = ttk.Entry(self, width=10, validate='key', validatecommand=(self.master.register(self.validate_numbers), '%P'))
     self.max_entry.insert(0, self.max_value)
     self.max_entry.pack(side=tk.LEFT, fill=tk.X, padx=5)
-    
     
     self.button = ttk.Button(self, text="Obtener t°C", command=self.get_temperature, style='success')
     self.button.pack(side=tk.RIGHT)
@@ -148,7 +148,7 @@ class Footer(ttk.Frame):
           path = str(path + "/" + image), 
           mask_vertex=average_mask_resized,
           total_masks=len(range_list),
-          current_mask=range_list.index(image) + 1,
+          current_mask=range_list.index(image),
           action=self.add_temp_ranges,
           action_type='range',
           temperature=(float(self.min_entry.get()), float(self.max_entry.get())))
@@ -161,7 +161,10 @@ class Footer(ttk.Frame):
         average_min = float(self.min_entry.get())
         average_max = float(self.max_entry.get())
       
-      for img in image_list:
+      master = self.master
+      progress = ProgressBar(master, total=len(image_list))
+      
+      for index,image in enumerate(image_list):
         img = Image.open(path + "/" + image).convert('L')
         average_mask_img = Image.fromarray(average_mask * 255).convert('L').resize(img.size)
         
@@ -179,6 +182,9 @@ class Footer(ttk.Frame):
           "values": values
         })
         
+        progress.update(index)
+      
+      progress.destroy()
       
       
     if len(self.data) > 0:
