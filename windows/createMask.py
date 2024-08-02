@@ -2,9 +2,11 @@ import tkinter as tk
 import ttkbootstrap as ttk
 from ttkbootstrap.constants import *
 from ttkbootstrap.dialogs import Messagebox
-from PIL import Image, ImageTk, ImageDraw
-import numpy as np
+from PIL import Image, ImageTk
 import cv2  
+import numpy as np
+
+from utils import txt_to_thermal
 
 class CreateMask(ttk.Toplevel):
   def __init__(self, master, path, action, total_masks, current_mask):
@@ -19,7 +21,7 @@ class CreateMask(ttk.Toplevel):
     self.action = action
     self.vertices = []
     
-    self.img = Image.open(path)
+    self.img = txt_to_thermal(path)
     width, height = self.img.size
     self.img = self.img.resize((500, int(height / width * 500)))
     
