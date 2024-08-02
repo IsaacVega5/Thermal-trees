@@ -8,6 +8,9 @@ def temperature_from_pixel_color(pixel_color, temperature_range = (-30.5, 24.4))
   return temperature
 
 def values_from_temperature_list(temperature_list):
+  if len(temperature_list) == 0:
+    return {'min':'N/A', 'max':'N/A', 'median':'N/A', 'std':'N/A', 'Tw':'N/A', 'Td':'N/A', 'Tc':'N/A', 'CWSI':'N/A', 'porosidad':'N/A'}
+  
   t_min = np.min(temperature_list)
   t_max = np.max(temperature_list)
   t_median = np.median(temperature_list)

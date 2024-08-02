@@ -12,7 +12,8 @@ from windows.resultTable import ResultTable
 from components.progressBar import ProgressBar
 
 from constants import TEMPERATURE_RANGE_METHODS
-
+from matplotlib import pyplot as plt
+from utils import txt_to_thermal, txt_to_array
 from services.process import temperature_from_pixel_color, values_from_temperature_list
 
 class Footer(ttk.Frame):
@@ -104,21 +105,17 @@ class Footer(ttk.Frame):
     
     if method_name == 'Individual':
       for image in image_list:
-        img = Image.open(path + "/" + image).convert('L')
-        average_mask_img = Image.fromarray(average_mask * 255).convert('L').resize(img.size)
-        
-        img = np.array(img)
-        average_mask_resized = np.array(average_mask_img) / 255
-        average_mask_resized = np.where(average_mask_resized >= 0.5, 1, 0)
+        img = txt_to_array(path + "/" + image)
+        height, width = img.shape
+        average_mask_img = Image.fromarray(average_mask).convert('L').resize((width, height))
         
         masked_histogram = MaskedHistogram(
           master = self.master,
           path = str(path + "/" + image), 
-          mask_vertex=average_mask_resized,
+          mask_vertex=average_mask_img,
           total_masks=len(image_list),
           current_mask=image_list.index(image),
-          action=self.add_data,
-          temperature=(float(self.min_entry.get()), float(self.max_entry.get())))
+          action=self.add_data)
         self.wait_window(masked_histogram)
     
     else:
@@ -136,22 +133,19 @@ class Footer(ttk.Frame):
       
       self.temp_ranges = []
       for image in range_list:
-        img = Image.open(path + "/" + image).convert('L')
-        average_mask_img = Image.fromarray(average_mask * 255).convert('L').resize(img.size)
-        
-        img = np.array(img)
-        average_mask_resized = np.array(average_mask_img) / 255
-        average_mask_resized = np.where(average_mask_resized >= 0.5, 1, 0)
+        img = txt_to_array(path + "/" + image)
+        height, width = img.shape
+        average_mask_img = Image.fromarray(average_mask).convert('L').resize((width, height))
         
         masked_histogram = MaskedHistogram(
           master = self.master,
           path = str(path + "/" + image), 
-          mask_vertex=average_mask_resized,
+          mask_vertex=average_mask_img,
           total_masks=len(range_list),
           current_mask=range_list.index(image),
           action=self.add_temp_ranges,
-          action_type='range',
-          temperature=(float(self.min_entry.get()), float(self.max_entry.get())))
+          action_type='range')
+        
         self.wait_window(masked_histogram)
       
       if len(self.temp_ranges) > 0:
@@ -165,16 +159,15 @@ class Footer(ttk.Frame):
       progress = ProgressBar(master, total=len(image_list))
       
       for index,image in enumerate(image_list):
-        img = Image.open(path + "/" + image).convert('L')
-        average_mask_img = Image.fromarray(average_mask * 255).convert('L').resize(img.size)
+        img = txt_to_array(path + "/" + image)
+        height, width = img.shape
+        average_mask_img = Image.fromarray(average_mask).convert('L').resize((width, height))
         
-        img = np.array(img)
-        average_mask_resized = np.array(average_mask_img) / 255
-        average_mask_resized = np.where(average_mask_resized >= 0.5, 1, 0)
+        average_mask_resized = np.array(average_mask_img)
         
-        temperature_list = np.array([temperature_from_pixel_color(pixel, (average_min, average_max)) for pixel in img[average_mask_resized == 1].flatten()])
+        temperature_list = np.array([ pixel for pixel in img[average_mask_resized == 1].flatten()])
         filtered_temperature_list = [t for t in temperature_list if t >= average_min and t <= average_max]
-        
+       
         values = values_from_temperature_list(filtered_temperature_list)
         
         self.add_data({

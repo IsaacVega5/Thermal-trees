@@ -11,15 +11,15 @@ def txt_to_array(path):
 
   matrix = [ df.iloc[i].to_list() for i in range(len(df)) ]
   matrix = [ row[0].split('\t')[1:] for row in matrix ]
-  matrix = [ [float( txt.replace('<-', '').replace('~', '').replace(',', '.') ) for txt in row] for row in matrix ]
+  matrix = [ [float( txt.replace('<', '').replace('~', '').replace(',', '.') ) for txt in row] for row in matrix ]
   
   return np.array(matrix)
 
 def txt_to_thermal(path):
   img = txt_to_array(path)
-  img = cv2.convertScaleAbs(img, alpha=3, beta=1)
+  img = cv2.normalize(img, None, 0, 255, cv2.NORM_MINMAX, cv2.CV_8U)
     
-  color_map = cv2.COLORMAP_JET
+  color_map = cv2.COLORMAP_VIRIDIS
   img_color = cv2.applyColorMap(img, color_map)
   
   im_pillow = Image.fromarray(cv2.cvtColor(img_color, cv2.COLOR_BGR2RGB))

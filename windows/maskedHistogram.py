@@ -6,16 +6,16 @@ from PIL import Image, ImageTk
 from RangeSlider.RangeSlider import RangeSliderH 
 from ttkbootstrap.dialogs import Messagebox
 
-import matplotlib as plt
 from matplotlib.backends.backend_tkagg import FigureCanvasTkAgg
 from matplotlib.figure import Figure
 
+from utils import txt_to_thermal, txt_to_array
 from services.process import temperature_from_pixel_color, values_from_temperature_list
 
 import cv2
 
 class MaskedHistogram(ttk.Toplevel):
-  def __init__(self, master, path, mask_vertex, total_masks, current_mask, action, temperature, action_type = 'calculate'):
+  def __init__(self, master, path, mask_vertex, total_masks, current_mask, action, action_type = 'calculate'):
     super().__init__(master)
     x = self.master.winfo_x()
     y = self.master.winfo_y()
@@ -29,26 +29,28 @@ class MaskedHistogram(ttk.Toplevel):
     self.mask_vertex = mask_vertex
     self.temperature_list = None
     self.bins_fig = 50
-    self.temperature_range = temperature
+    self.temperature_range = None
     
-    self.full_img = Image.open(path).convert('L')
-    self.full_mask = Image.fromarray(mask_vertex).convert('L').resize(self.full_img.size)
+    self.full_img = txt_to_thermal(path)
+    self.temperatures = txt_to_array(path)
+    self.full_mask = mask_vertex
     self.full_img = np.array(self.full_img)
     self.full_mask = np.array(self.full_mask)
     
     self.values = self.full_img[self.full_mask == 1]
-    self.min, self.max = temperature
+    self.min, self.max = np.min(self.temperatures), np.max(self.temperatures)
     
-    self.img = Image.open(path)
+    self.img = txt_to_thermal(path)
     width, height = self.img.size
     self.img = self.img.resize((500, int(height / width * 500)))
     width, height = self.img.size
     
-    self.mask = Image.fromarray(mask_vertex).convert('L').resize(self.img.size)
+    self.mask = mask_vertex.resize(self.img.size)
     self.mask = np.array(self.mask)
     
     self.masked_img = cv2.bitwise_and(np.array(self.img), np.array(self.img), mask=self.mask)
-    self.masked_img = Image.fromarray(self.masked_img).convert('L')
+    
+    self.masked_img = Image.fromarray(self.masked_img)
       
     self.masked_img = ImageTk.PhotoImage(self.masked_img)
   
@@ -139,11 +141,11 @@ class MaskedHistogram(ttk.Toplevel):
     img = self.full_img
     mask = self.full_mask
     
-    temperature_range = (float(self.min_value_entry.get()), float(self.max_value_entry.get()))
-    temperature_list = np.array([temperature_from_pixel_color(pixel, temperature_range) for pixel in img[mask == 1].flatten()])
+    temperature_list = np.array([pixel for pixel in img[mask == 1].flatten()])
     self.temperature_list = temperature_list
     self.ax.hist(temperature_list, bins=self.bins_fig, color="#4582ec")
     self.canvas.draw()
+    
   def click_temperature(self, event):
     x, y = event.x, event.y
     self.set_temperature_pixel(x, y)
@@ -151,14 +153,13 @@ class MaskedHistogram(ttk.Toplevel):
   def set_temperature_pixel(self, x, y):
     if self.mask[y][x] == 0: return
     self.dot_draw(x, y)
-    img = Image.open(self.path).convert('L')
+    img = txt_to_thermal(self.path)
     width, height = self.img.size
-    img = self.img.resize((500, int(height / width * 500)))
+    original_img = Image.fromarray(txt_to_array(self.path))
+    img = original_img.resize((500, int(height / width * 500)))
     img = np.array(img)
-    pixel = img[y][x][0]
-    temperature_range = (float(self.min_value_entry.get()), float(self.max_value_entry.get()))
-    temperature = temperature_from_pixel_color(pixel, temperature_range)
-    self.temperature_label.configure(text=f"Temperatura: {temperature}°C")
+    pixel = img[y][x]
+    self.temperature_label.configure(text=f"Temperatura: {pixel:.1f}°C")
     
   def dot_draw(self, x, y):
     self.canvas_masked_img.delete('all')
