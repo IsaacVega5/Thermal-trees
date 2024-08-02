@@ -64,6 +64,9 @@ class EntryMask(ttk.Frame):
       mask_list = images_list[-n_mask:]
     elif selected_type == 'Seleccionados':
       selected = self.master.Images_list.list.selection()
+      if len(selected) == 0:
+        Messagebox.show_error(message="No hay imágenes seleccionadas", title='Aviso', parent=None, alert=True, buttons=["Aceptar:primary"])
+        return
       for item in selected:
         mask_list.append(self.master.Images_list.list.item(item)['text'])
     else:
