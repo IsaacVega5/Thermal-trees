@@ -3,6 +3,9 @@ import ttkbootstrap as ttk
 from ttkbootstrap.constants import *
 import os
 from PIL import Image, ImageTk
+from utils import txt_to_thermal
+import numpy as np
+import cv2
 
 class ImagesList(ttk.Frame):
   def __init__(self, master):
@@ -42,7 +45,7 @@ class ImagesList(ttk.Frame):
     image_list = []
     self.list.delete(*self.list.get_children())
     for file in os.listdir(path):
-      if file.endswith(".tif"):
+      if file.endswith(".txt"):
         self.list.insert("", tk.END, text=file, tags=(file,))
         self.list.bind("<ButtonRelease-1>", self.list_click)
         image_list.append(file)
@@ -52,7 +55,7 @@ class ImagesList(ttk.Frame):
   def list_click(self, event):
     file = self.list.item(self.list.focus())['text']
     path = self.master.path + '/' + file
-    img = ImageTk.PhotoImage(Image.open(path).resize((150, 150)))
+    img = ImageTk.PhotoImage(txt_to_thermal(path))
     self.three_label.configure(image=img)
     self.three_label.image = img
     pass
