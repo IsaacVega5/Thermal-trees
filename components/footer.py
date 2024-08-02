@@ -12,9 +12,8 @@ from windows.resultTable import ResultTable
 from components.progressBar import ProgressBar
 
 from constants import TEMPERATURE_RANGE_METHODS
-from matplotlib import pyplot as plt
-from utils import txt_to_thermal, txt_to_array
-from services.process import temperature_from_pixel_color, values_from_temperature_list
+from utils import txt_to_array
+from services.process import values_from_temperature_list
 
 class Footer(ttk.Frame):
   def __init__(self, master):
@@ -32,28 +31,28 @@ class Footer(ttk.Frame):
     self.separator.pack(side=tk.TOP, fill=tk.X, pady=(0,10))
     
     
-    self.min_entry = ttk.Entry(self, width=10, validate='key', validatecommand=(self.master.register(self.validate_numbers), '%P'))
-    self.min_entry.insert(0, self.min_value)
-    self.min_entry.pack(side=tk.LEFT, fill=tk.X, padx=(0,5))
+    # self.min_entry = ttk.Entry(self, width=10, validate='key', validatecommand=(self.master.register(self.validate_numbers), '%P'))
+    # self.min_entry.insert(0, self.min_value)
+    # self.min_entry.pack(side=tk.LEFT, fill=tk.X, padx=(0,5))
     
-    self.label = ttk.Label(self, text="-", justify="left", anchor="w")
-    self.label.pack(side=tk.LEFT, fill=tk.X)
+    # self.label = ttk.Label(self, text="-", justify="left", anchor="w")
+    # self.label.pack(side=tk.LEFT, fill=tk.X)
     
-    self.max_entry = ttk.Entry(self, width=10, validate='key', validatecommand=(self.master.register(self.validate_numbers), '%P'))
-    self.max_entry.insert(0, self.max_value)
-    self.max_entry.pack(side=tk.LEFT, fill=tk.X, padx=5)
+    # self.max_entry = ttk.Entry(self, width=10, validate='key', validatecommand=(self.master.register(self.validate_numbers), '%P'))
+    # self.max_entry.insert(0, self.max_value)
+    # self.max_entry.pack(side=tk.LEFT, fill=tk.X, padx=5)
     
     self.button = ttk.Button(self, text="Obtener t°C", command=self.get_temperature, style='success')
     self.button.pack(side=tk.RIGHT)
     
     self.selector = ttk.Combobox(self, width=15,values=TEMPERATURE_RANGE_METHODS, state="readonly", foreground="#4986ef", background="#ffffff", bootstyle="primary")
     self.selector.current(0)
-    self.selector.pack(side=tk.RIGHT, fill=tk.X, padx=5)
+    self.selector.pack(side=tk.LEFT, fill=tk.X, padx=5)
     
     self.n_range_entry = ttk.Entry(self, width=10, validate='key', validatecommand=(self.master.register(self.validate_int_numbers), '%P'))
     default_n_range_mask = 20 if len(self.master.images_list) > 20 else len(self.master.images_list) // 3
     self.n_range_entry.insert(0, default_n_range_mask)
-    self.n_range_entry.pack(side=tk.RIGHT, fill=tk.X, padx=5)
+    self.n_range_entry.pack(side=tk.LEFT, fill=tk.X, padx=5)
     
   
   def validate_int_numbers(self, value):
