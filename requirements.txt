@@ -10,13 +10,16 @@ matplotlib==3.9.0
 numpy==1.26.4
 opencv-python==4.10.0.82
 packaging==24.1
+pandas==2.2.2
 pillow==10.3.0
 pyparsing==3.1.2
 python-dateutil==2.9.0.post0
+pytz==2024.1
 RangeSlider==2023.7.2
 setuptools==70.0.0
 six==1.16.0
 tenacity==8.4.1
 ttkbootstrap==1.10.1
+tzdata==2024.1
 wheel==0.43.0
 XlsxWriter==3.2.0
