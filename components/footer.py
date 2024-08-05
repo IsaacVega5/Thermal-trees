@@ -113,6 +113,9 @@ class Footer(ttk.Frame):
         range_list = image_list[-n_entry:]
       elif method_name == 'Seleccionados':
         selected = self.master.Images_list.list.selection()
+        if len(selected) == 0:
+          Messagebox.show_error(message="No hay imágenes seleccionadas", title='Aviso', parent=None, alert=True, buttons=["Aceptar:primary"])
+          return
         for item in selected:
           range_list.append(self.master.Images_list.list.item(item)['text'])
       else:
