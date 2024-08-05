@@ -138,10 +138,11 @@ class MaskedHistogram(ttk.Toplevel):
     self.destroy()
   
   def data_from_img(self):
-    img = self.full_img
+    img = np.array(self.temperatures)
     mask = self.full_mask
     
     temperature_list = np.array([pixel for pixel in img[mask == 1].flatten()])
+    
     self.temperature_list = temperature_list
     self.ax.hist(temperature_list, bins=self.bins_fig, color="#4582ec")
     self.canvas.draw()
