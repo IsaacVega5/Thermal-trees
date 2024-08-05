@@ -142,9 +142,8 @@ class Footer(ttk.Frame):
         average_min = sum([x[0] for x in self.temp_ranges]) // len(self.temp_ranges)
         average_max = sum([x[1] for x in self.temp_ranges]) // len(self.temp_ranges)
       else:
-        average_min = float(self.min_entry.get())
-        average_max = float(self.max_entry.get())
-      
+        average_min, average_max = None, None
+        
       master = self.master
       progress = ProgressBar(master, total=len(image_list))
       
@@ -156,8 +155,12 @@ class Footer(ttk.Frame):
         average_mask_resized = np.array(average_mask_img)
         
         temperature_list = np.array([ pixel for pixel in img[average_mask_resized == 1].flatten()])
-        filtered_temperature_list = [t for t in temperature_list if t >= average_min and t <= average_max]
-       
+        
+        if average_min is not None and average_max is not None:
+          filtered_temperature_list = [t for t in temperature_list if t >= average_min and t <= average_max]
+        else:
+          filtered_temperature_list = temperature_list
+        
         values = values_from_temperature_list(filtered_temperature_list)
         
         self.add_data({
