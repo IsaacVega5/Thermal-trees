@@ -7,12 +7,12 @@ def get_name_from_path(path):
   return path.split('/')[-1].split('.')[0]
 
 def txt_to_array(path):
-  df = pd.read_fwf(path, delimiter='\t', encoding='utf-16')[2:]
+  df = pd.read_fwf(path, delimiter=' ', encoding='utf-16')[2:]
 
   matrix = [ df.iloc[i].to_list() for i in range(len(df)) ]
   matrix = [ row[0].split('\t')[1:] for row in matrix ]
-  matrix = [ [float( txt.replace('<', '').replace('~', '').replace(',', '.') ) for txt in row] for row in matrix ]
-  
+  matrix = [ [float( txt.replace('<', '').replace('~', '').replace(',', '.') ) for txt in row if txt != ''] for row in matrix ]
+
   return np.array(matrix)
 
 def txt_to_thermal(path):
