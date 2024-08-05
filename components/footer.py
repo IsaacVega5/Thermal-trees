@@ -30,18 +30,6 @@ class Footer(ttk.Frame):
     self.separator = ttk.Separator(self, orient=HORIZONTAL)
     self.separator.pack(side=tk.TOP, fill=tk.X, pady=(0,10))
     
-    
-    # self.min_entry = ttk.Entry(self, width=10, validate='key', validatecommand=(self.master.register(self.validate_numbers), '%P'))
-    # self.min_entry.insert(0, self.min_value)
-    # self.min_entry.pack(side=tk.LEFT, fill=tk.X, padx=(0,5))
-    
-    # self.label = ttk.Label(self, text="-", justify="left", anchor="w")
-    # self.label.pack(side=tk.LEFT, fill=tk.X)
-    
-    # self.max_entry = ttk.Entry(self, width=10, validate='key', validatecommand=(self.master.register(self.validate_numbers), '%P'))
-    # self.max_entry.insert(0, self.max_value)
-    # self.max_entry.pack(side=tk.LEFT, fill=tk.X, padx=5)
-    
     self.button = ttk.Button(self, text="Obtener t°C", command=self.get_temperature, style='success')
     self.button.pack(side=tk.RIGHT)
     
