@@ -11,9 +11,9 @@ executables = [
 ]
 
 setup(name='Thermal Trees',
-      version = '2.0',
+      version = '3.0',
       author='Isaac vega Salgado',
       author_email='isaacvega361@gmail.com',
-      description = 'Software para la medición en Celsius de la temperatura de árboles',
+      description = 'Thermal Trees',
       options = {'build_exe': build_options},
       executables = executables)
