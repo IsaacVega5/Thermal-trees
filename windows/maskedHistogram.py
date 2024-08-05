@@ -10,7 +10,7 @@ from matplotlib.backends.backend_tkagg import FigureCanvasTkAgg
 from matplotlib.figure import Figure
 
 from utils import txt_to_thermal, txt_to_array
-from services.process import temperature_from_pixel_color, values_from_temperature_list
+from services.process import values_from_temperature_list
 
 import cv2
 
